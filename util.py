@@ -36,7 +36,7 @@ def diff_image(scale,img):
 def nms(data):
     """
         data: the predicted result without non-maximum suppression
-        return： the predicted result after non-maximum suppression
+        return： the index of predicted result after non-maximum suppression
     """
     order = data[:,5].argsort()[::-1]
     delete = []
@@ -102,3 +102,40 @@ def showImg_test(data,path):
             img1 = img[a[j,1]:a[j,1]+a[j,3],a[j,2]:a[j,2]+a[j,4]]
             cv2.imwrite(path + '/%05d.jpg'%c,img1)
             c += 1
+
+
+### Save the data as txt in a certain format
+def save_txt(name_txt,data):
+    """
+        name_txt: name of saved txt
+        data: the data
+    """
+    np.savetxt(name_txt,data,fmt='%d %d %d %d %d %.3f')
+
+
+### Caculate iou between tow boxes separately
+def IoU(a,b):
+    """
+        a, b: the data of coordinates and the size of sliding window
+        return: the result of iou
+    """
+    y1, x1, h1, l1 = a
+    y2, x2, h2, l2 = b
+    x1_m = x1 + l1
+    y1_m = y1 + h1
+    x2_m = x2 + l2
+    y2_m = y2 + h2
+    s1 = l1 * h1
+    s2 = l2 * h2
+    xmin = max(x1,x2)
+    ymin = max(y1,y2)
+    xmax = min(x1_m,x2_m)
+    ymax = min(y1_m,y2_m)
+
+    I = max(0,(xmax - xmin)) * max(0,(ymax - ymin))
+
+    return I/(s1 + s2 - I)
+
+
+
+

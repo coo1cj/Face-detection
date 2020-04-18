@@ -18,9 +18,9 @@ def generate_neg(num,nb):
         ### randomly generate coordinates x,y
         y = random.randint(0, img.shape[0]-96)
         x = random.randint(0, img.shape[1]-96)
-        a = [x, y, 96, 96]
+        a = [y, x, 96, 96]
         for i in range(len(d[d[:,0] == num])):
-            if IoU(a,d[d[:,0] == num][i,1:]) < 0.15:
+            if IoU(a,d[d[:,0] == num][i,1:]) < 0.05:
                 count += 1
             else:
                 break
@@ -28,7 +28,7 @@ def generate_neg(num,nb):
             break
     
     cropImg = img[(y):(y + 96), (x):(x + 96)]
-    cv2.imwrite('train_neg/%05d.jpg'%nb, cropImg)
+    cv2.imwrite('train_neg1/%05d.jpg'%nb, cropImg)
 
 
 ### Generate 10 negative samples per image

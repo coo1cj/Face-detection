@@ -77,7 +77,7 @@ def showImg_test(data,path):
         path: the path for saving the predicted images
     '''
     c = 0
-    for i in range(1,501):
+    for i in range(1,11):
         img = cv2.imread('test/%04d.jpg'%i)
         ### select the prediction result of the corresponding picture
         a = data[data[:,0] == i]
@@ -88,7 +88,7 @@ def showImg_test(data,path):
 
 
 ### for show all the images of predicted faces in train
-def showImg_test(data,path):
+def showImg_train(data,path):
     '''
         data: the predicted results (txt)
         path: the path for saving the predicted images

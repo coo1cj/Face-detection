@@ -65,7 +65,7 @@ def nms(data):
         ovr = inter / (areas[i] + areas[order[1:]] - inter)
 
         ### choose the index of all boxes with the iou less than a threshold
-        index = np.where(ovr <= 0.45)[0]   
+        index = np.where(ovr <= 0.3)[0]   
         order = order[index + 1]
     return delete
 
@@ -77,7 +77,7 @@ def showImg_test(data,path):
         path: the path for saving the predicted images
     '''
     c = 0
-    for i in range(1,11):
+    for i in range(1,501):
         img = cv2.imread('test/%04d.jpg'%i)
         ### select the prediction result of the corresponding picture
         a = data[data[:,0] == i]

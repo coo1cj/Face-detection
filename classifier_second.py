@@ -36,7 +36,7 @@ for i in range(1,1001):
         count += 1
 
 for i in range(10000):
-    I = io.imread('train_neg/%05d.jpg'%i, as_gray=True)
+    I = io.imread('train_neg1/%05d.jpg'%i, as_gray=True)
     I = cv2.resize(I,(64,64))
     x[i+1871,:] = hog(I,orientations=12,transform_sqrt=True)
 
@@ -83,9 +83,13 @@ for i in range(1,1001):
 ### cross-validation
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size = 0.25, random_state = rand.randint(1, 100))
 
-### training the classifier again
+### see the result
 clf1 = clf.fit(x_train,y_train)
 print(clf1.score(x_test,y_test))
+
+### training the classifier again
+clf1 = clf.fit(x,y)
+
 
 ### save new classifier
 joblib.dump(clf1,'final_classifier/last_train_model_2.m')

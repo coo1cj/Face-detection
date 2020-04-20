@@ -24,17 +24,23 @@ for i in range(10000):
     x[i+1284,:] = hog(I,orientations=12,transform_sqrt=True)
 
 
-### Cross-validation prevents overfitting
+### Cross-validation 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.25, random_state = rand.randint(1, 100))
 
-### Training classifier
+### See the result
 clf = LinearSVC().fit(x_train,y_train)
+print(clf.score(x_test,y_test))
+
+
+### Training the classifier
+clf = LinearSVC().fit(x,y)
+print(clf.score(x_test,y_test))
 
 ### Save the classifier
 joblib.dump(clf,'final_classifier/last_train_model_1.m')
 
 
-print(clf.score(x_test,y_test))
+
 
 
 

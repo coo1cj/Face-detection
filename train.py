@@ -9,10 +9,8 @@ import random as rand
 import joblib
 from util import *
 
-
-
-
-clf = joblib.load('train_model_first.m')
+### load the first classifier
+clf = joblib.load('final_classifier/last_train_model_1.m')
 
 
 ### choose the parameters
@@ -46,39 +44,25 @@ box = np.array(box)
 save_txt('train_predict.txt',box)
 
 
+### The following is selecting the falsepositive data
+res = np.zeros(6)
 
+### it's a txt after adding the scores (100.000) to the label_train
+d1 = np.loadtxt('change.txt')
 
+### Combining predicted and correct data
+for i in range(1,1001):
+    t = d1[d1[:,0] == i]
+    b = box[box[:,0] == i]
+    res = np.vstack((res,t))
+    res = np.vstack((res,b))
 
+### Using the function nms for removing the truepositive
+res1 = np.zeros(6)
+for i in range(1,1001):
+    d = res[res[:,0] == i]
+    res1 = np.vstack((res1,d[nms(d)]))
+res1 = res1[res1[:,5] != 100.000]
 
-#np.savetxt('train_predict_2.txt',box,fmt='%d %d %d %d %d %.3f')  
-
-
-""" cropImg = img
-                cv2.imwrite('fp/%05d.jpg'%count,cropImg) 
-                count += 1 """
-
-        #train[:,1:3] /= 1.5
-"""               for j in range(len(train[train[:,0] == i])):
-                    if IoU(a,train[train[:,0] == i][j,1:]) < 0.15: """
-"""     im = cv2.cvtColor(pic,cv2.COLOR_BGR2RGB)
-    cv2.imshow("ff",image)
-    cv2.waitKey(0) """
-      
- 
-""" for i in range(1,10):
-    image = cv2.imread('train/%04d.jpg'%i)
-    
-    for pic in diff_image(scale,image):
-        pic1 = np.copy(pic)
-        #pic2 = np.copy(pic)
-        pic1 = cv2.cvtColor(pic1,cv2.COLOR_BGR2GRAY)
-        for (x, y, img) in slide_win(8,8,pic,window_size):
-            feature = hog(pic1[y:y+window_size,x:x+window_size]).reshape(1,-1)
-            if clf.predict(feature) == 1:
-                a = [y,x,64,64]
-                for j in range(len(train[train[:,0] == i])):
-                    if IoU(a,train[train[:,0] == i][j,1:]) < 0.5:
-                        cropImg = img
-                        cv2.imwrite('false_pos/%03d.jpg'%count,cropImg)   
-                        count += 1  
-        train[:,1:3] /= scale """
+### Save the falsepositive
+save_txt('falsepotive.txt',res1[1:])

@@ -9,22 +9,8 @@ import random as rand
 import joblib
 from util import *
 
-
-""" def slide_win(x_straid,y_straid,img,window_size,scale):
-    if scale != 1 and scale < (max(img.shape[0],img.shape[1]) // window_size):
-        w = int(img.shape[1] // scale)
-        h = int(img.shape[0] // scale)
-    elif scale == 1 and scale < (max(img.shape[0],img.shape[1]) // window_size):
-        w = img.shape[1]
-        h = img.shape[0]
-    for i in range(1,h-window_size,y_straid):
-        for j in range(1,w-window_size,x_straid):
-            yield (j, i, img[i:i+window_size,j:j+window_size]) """
-
-
-
 ### load the second classifier
-clf = joblib.load('last_train_model_2.m')
+clf = joblib.load('final_classifier/last_train_model_2.m')
 
 ### choose the parameters
 window_size = 96
@@ -52,37 +38,26 @@ for i in range(1,501):
                 box = np.vstack((box,[i,y*count,x*count,window_size*count,window_size*count,max(clf.decision_function(feature))]))
                 #cv2.imwrite('win96_train_fp/%05d.jpg'%c,img1)
                 #c += 1
-        
         count *= scale
 box = np.array(box)
 
 ### use the function non-maximum suppression
 res = np.zeros(6)
-for i in range(1,1001):
+for i in range(1,501):
     d = box[box[:,0] == i]
     res = np.vstack((res,d[nms(d)]))
 
 ### filter out the confidence scores greater than 0.7
-res = res[res[:,5] > 0.7]
+#res = res[res[:,5] > 0.7]
 
 ### save the final prediction
-save_txt('test_predict.txt',res)
+save_txt('test_predict_419.txt',res)
 
 
 
 
-""" scale = [1,1.2,1.5,2,2.5]
-for i in range(1,11):
-    count = 1
-    image = cv2.imread('test/%04d.jpg'%i)
-    pic = np.copy(image)
-    pic1 = cv2.cvtColor(pic,cv2.COLOR_BGR2GRAY)
-    for j in scale:
-        count *= j
-        for (x,y,img) in slide_win(12,12,image,window_size,j):
-            feature = hog(pic1[y:y+window_size,x:x+window_size]).reshape(1,-1)
-            if clf.predict(feature) == 1:
-                box = np.vstack((box,[i,y*count,x*count,window_size*count,window_size*count,max(clf.decision_function(feature))])) """
+
+
     
 
 

@@ -8,8 +8,8 @@ import random as rand
 import joblib
 
 
-x = np.zeros((11284,3888))
-y = np.hstack((np.ones(1284),np.zeros(10000)))
+x = np.zeros((12568,3888))
+y = np.hstack((np.ones(2568),np.zeros(10000)))
 
 
 ### Generate training set 
@@ -18,26 +18,48 @@ for i in range(1284):
     I = cv2.resize(I,(64,64))
     x[i,:] = hog(I,orientations=12,transform_sqrt=True)
 
+
+for i in range(1284):
+    I = io.imread('apresrotation/%04d.jpg'%i, as_gray=True)
+    I = cv2.resize(I,(64,64))
+    x[i+1284,:] = hog(I,orientations=12,transform_sqrt=True)
+
+
 for i in range(10000):
     I = io.imread('train_neg1/%05d.jpg'%i, as_gray=True)
     I = cv2.resize(I,(64,64))
-    x[i+1284,:] = hog(I,orientations=12,transform_sqrt=True)
+    x[i+2568,:] = hog(I,orientations=12,transform_sqrt=True)
 
 
 ### Cross-validation 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.25, random_state = rand.randint(1, 100))
 
-### See the result
-clf = LinearSVC().fit(x_train,y_train)
-print(clf.score(x_test,y_test))
+### try the different paremeters
+""" C = np.linspace(0.1,1,num=20)
+losses=['hinge','squared_hinge']
+c_w = ['balanced',None]
+
+m = 0
+for c in C:
+    for l in losses:
+        for cw in c_w:
+            clf = LinearSVC(C=c,loss=l,class_weight=cw).fit(x_train,y_train)
+            if m < clf.score(x_test,y_test):
+                m = clf.score(x_test,y_test)
+                l_res = l
+                cw_res = cw
+                c_res = c
+print(m)
+print(l_res)
+print(cw_res)
+print(c_res) """
 
 
-### Training the classifier
-clf = LinearSVC().fit(x,y)
-print(clf.score(x_test,y_test))
+### Training the classifier with the best parameters
+clf1 = LinearSVC(C=0.1,loss='hinge').fit(x,y)
 
 ### Save the classifier
-joblib.dump(clf,'final_classifier/last_train_model_1.m')
+joblib.dump(clf1,'final_classifier/train_model_1.m')
 
 
 

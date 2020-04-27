@@ -3,9 +3,11 @@ from skimage.feature import hog
 from skimage import io
 import cv2
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,GridSearchCV
 import random as rand
 import joblib
+import sklearn.metrics 
+from sklearn import metrics
 
 
 ### load the truepositive and falsepositive samples
@@ -85,33 +87,35 @@ for i in range(1,1001):
 
 
 ### cross-validation
-x_train, x_test, y_train, y_test = train_test_split(x,y,test_size = 0.25, random_state = rand.randint(1, 100))
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size = 0.25, random_state = 0)
 
 ### try the different paremeters
-""" C = np.linspace(0.01,3)
-dual = [True,False]
-losses=['hinge','squared_hinge']
+#C = np.linspace(0.01,1,num=50)
+""" losses=['hinge','squared_hinge']
 c_w = ['balanced',None]
 
 m = 0
 for c in C:
     for l in losses:
         for cw in c_w:
-            clf = LinearSVC(C=c,loss=l,class_weight=cw).fit(x_train,y_train)
-            if m < clf.score(x_test,y_test):
-                m = clf.score(x_test,y_test)
+            clf = LinearSVC(C=c,loss=l,max_iter=2000,class_weight=cw).fit(x_train,y_train)
+            if m < metrics.f1_score(y_test,clf.predict(x_test)):
+                m = metrics.f1_score(y_test,clf.predict(x_test))
                 l_res = l
-                cw_res = cw
                 c_res = c
+                cw_res = cw
 print(m)
 print(l_res)
-print(cw_res)
-print(c_res) """
-
+print(c_res)
+print(cw_res) """
+""" grid = {"C": np.linspace(0.01,1,num=50), "loss": ['hinge','squared_hinge'], "class_weight": ['balanced',None]}
+score = GridSearchCV(LinearSVC(),grid,scoring='f1').fit(x_train,y_train)
+print(score.best_params_)
+print(score.best_score_) """
 
 
 ### training the classifier again
-clf = LinearSVC(C=0.2,loss='hinge').fit(x,y)
+clf = LinearSVC(C=0.131,loss='squared_hinge',class_weight=None).fit(x,y)
 
 ### save new classifier
 joblib.dump(clf,'final_classifier/train_model_2.m')
